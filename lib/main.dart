@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:gt_client/app_const.dart';
 import 'package:gt_client/dto/measurement_dto.dart';
 
 void main() {
@@ -13,12 +14,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Get Tempure',
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Get Tempure'),
     );
   }
 }
@@ -39,16 +40,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> fetchToken() async {
     try {
-      Response tokenResponse = await Dio().post('http://192.168.1.31:6100/token', data: "{\"username\": \"oleg\",\"password\": \"oleg\"}");
+      Response tokenResponse = await Dio().post(AppConst.token_route, data: "{\"username\": \"oleg\",\"password\": \"oleg\"}");
       setState(() {
         _token = tokenResponse.data["data"]["accessToken"];
       });
 
-      Response dataResponse = await Dio().get('http://192.168.1.31:6200/measurements', options: Options(headers: {"Authorization": "Bearer $_token"}));
+      Response dataResponse = await Dio().get(AppConst.measurement_route, options: Options(headers: {"Authorization": "Bearer $_token"}));
       List<dynamic> jsonData = dataResponse.data;
       setState(() {
         measurementList = jsonData.map((x) => MeasurementDTO.fromJson(x)).toList();
-        measurementList = measurementList.sublist(measurementList.length-10, measurementList.length);
+        measurementList = measurementList.sublist(measurementList.length-6, measurementList.length);
       });
       //print(dataResponse.data);
     } catch (e) {
